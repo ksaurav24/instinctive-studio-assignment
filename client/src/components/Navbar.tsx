@@ -16,11 +16,11 @@ const plusJakartaSans = Plus_Jakarta_Sans({
 });
 
 const navItems = [
-    { name: 'Dashboard', icon: dashboard, href: '/dashboard' },
-    { name: 'Camera', icon: cctv, href: '/cctv' },
-    { name: 'Scenes', icon: settings, href: '/settings' },
-    { name: 'Incidents', icon: alerts, href: '/alerts' },
-    { name: 'Users', icon: users, href: '/users' },
+    { name: 'Dashboard', icon: dashboard, href: '/' },
+    { name: 'Camera', icon: cctv, href: '#' },
+    { name: 'Scenes', icon: settings, href: '#' },
+    { name: 'Incidents', icon: alerts, href: '#' },
+    { name: 'Users', icon: users, href: '#' },
 ]
 
 
@@ -48,7 +48,7 @@ export default function Navbar() {
       {/* User Dropdown */}
       <div className="relative">
         <button
-          className="flex items-center gap-2 focus:outline-none"
+          className="flex items-center gap-2 focus:outline-none cursor-pointer"
         >
           <Image src="/user_icon.png" alt="User" width={32} height={32} className="rounded-full" />
           <div className="flex flex-col items-start  md:flex">
