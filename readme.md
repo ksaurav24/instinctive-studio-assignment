@@ -1,244 +1,98 @@
-```markdown
-# SecureSight Incident Dashboard – Technical Architecture Report
+# SecureSight – Internship Technical Assignment
 
-## 📌 Project Overview
 
-SecureSight is a fictional surveillance analytics system. This technical assignment implements the **incident monitoring dashboard**, allowing users to:
+## Live Demo
 
-- View CCTV-based incident logs
-- Play incident clips (stubbed/static)
-- Mark incidents as resolved
-- Operate over a realistic data model and modern stack
+-  **Frontend**: [https://securesight-dashboard.vercel.app](https://securesight-dashboard.vercel.app)
+-  **Backend**: [https://securesight-api.onrender.com](https://securesight-api.onrender.com)
 
----
+> ⚠️ The deployed version uses a **cloud-hosted PostgreSQL** database provisioned via **Aiven.io**. For local testing, a development PostgreSQL container is included via Docker Compose.
 
-## 🏗️ Project Scope
 
-### ✅ Mandatory Features
-- Incident Player (left side)
-- Incident List with resolve capability (right side)
-- Navbar
-- API + Database with seed data
+## Tech Stack
 
-### ⚙️ Optional Features (Extra Credit)
-- Timeline scrubber under player (SVG/canvas)
-- 3D model interface (React Three Fiber)
+> **Frontend:** Next.js 14, TailwindCSS, Framer Motion  
+> **Backend:** Node.js, Express.js, TypeScript, Prisma ORM  
+> **Database:** PostgreSQL (Aiven Cloud in Production)  
+> **Hosting:** Vercel (Frontend), Render (Backend)  
+> **DevOps:** Docker, Docker Compose, CI/CD Ready
 
----
 
-## 🧱 Tech Stack
+## Local Development (Docker-Based)
 
-| Layer       | Technology               |
-|------------|---------------------------|
-| Frontend    | Next.js 15 App Router, TailwindCSS |
-| Backend     | Node.js + Express        |
-| ORM         | Prisma ORM               |
-| Database    | PostgreSQL (local/Neon)  |
-| Runtime     | ts-node-dev (dev), Node.js (prod) |
-| Deployment  | Vercel (frontend), Render/Railway (backend) |
-| Dev Tools   | TypeScript, ESLint, dotenv |
-
----
-
-## 🔁 High-Level Architecture
-
-```
-
-```
-               ┌────────────────────┐
-               │     Frontend       │
-               │ (Next.js 15 App)   │
-               └────────┬───────────┘
-                        │
-                        ▼
-    ┌─────────────────────────────┐
-    │ HTTP API (Node.js + Express)│
-    └────────┬────────────┬───────┘
-             │            │
-             ▼            ▼
-    Prisma ORM       Static Media (public/)
-             │
-             ▼
-       PostgreSQL DB (Cloud/Local)
-```
-
-```
-
----
-
-## 🧩 Folder Structure
-
-```
-
-/secure-sight
-├── frontend/              # Next.js App Router UI
-│   └── app/               # App structure + routing
-│       └── api/           # API proxy calls (optional)
-│       └── components/    # Navbar, IncidentList, Player
-├── backend/
-│   └── src/
-│       ├── controllers/   # Incident controller logic
-│       ├── routes/        # Express routes
-│       ├── prisma/        # Prisma Client
-│       ├── seed/          # Seeder script
-│       └── index.ts       # Server entry
-│   └── prisma/            # schema.prisma
-├── .env
-└── README.md
-
-````
-
----
-
-## 🧬 Data Model
-
-### Camera
-
-```prisma
-model Camera {
-  id        Int       @id @default(autoincrement())
-  name      String
-  location  String
-  incidents Incident[]
-}
-````
-
-### Incident
-
-```prisma
-model Incident {
-  id           Int      @id @default(autoincrement())
-  cameraId     Int
-  camera       Camera   @relation(fields: [cameraId], references: [id])
-  type         String
-  tsStart      DateTime
-  tsEnd        DateTime
-  thumbnailUrl String
-  resolved     Boolean  @default(false)
-}
-```
-
----
-
-## 🛠️ API Reference
-
-### GET `/api/incidents?resolved=false`
-
-* Fetch unresolved incidents (default behavior)
-* Ordered by timestamp (desc)
-* Includes camera info
-
-### PATCH `/api/incidents/:id/resolve`
-
-* Toggle `resolved = true` for an incident
-* Returns updated incident
-
----
-
-## 🧪 Seed Script (`seed.ts`)
-
-* Inserts 3 camera locations:
-
-  * Shop Floor A, Vault, Entrance
-* Inserts 12 incident logs across 24 hours
-* 3 Threat types:
-
-  * Gun Threat, Unauthorised Access, Face Recognised
-* Randomized timestamps, camera assignments, thumbnail paths
-
----
-
-## 🖥️ Frontend Behavior
-
-### Incident Player
-
-* Renders stub video (`/public/video.mp4`) or static frame
-* Mini thumbnail strip for 2 other recent incidents
-
-### Incident List
-
-* Shows:
-
-  * Thumbnail, Type, Time, Location
-  * "Resolve" button
-* Optimistic UI:
-
-  * Fades out on click
-  * Backend patch → updated UI
-
----
-
-## ⚙️ Dev Commands
-
-### Backend
+Clone and launch all services locally:
 
 ```bash
-pnpm install
-npx prisma migrate dev
-pnpm run seed
-pnpm run dev
-```
+git clone https://github.com/ksaurav/instinctive-studio-assignment.git
+cd instinctive-studio-assignment
+docker-compose up --build
+````
 
-### Frontend
+This will start:
 
-```bash
-pnpm install
-pnpm run dev
-```
+* `Frontend` at `http://localhost:3000`
+* `Backend` at `http://localhost:4000`
+* `PostgreSQL` database on port `5432`
 
----
 
-## 🚀 Deployment Notes
+## Environment Configuration
 
-### Backend
-
-* Host on Render/Railway
-* `.env` with `DATABASE_URL`
-
-### Frontend
-
-* Deploy via Vercel
-* Point to API base URL via `NEXT_PUBLIC_API_URL`
-
----
-
-## 🔒 Environment Variables
+### `/server/.env` (used locally)
 
 ```env
-DATABASE_URL="postgresql://user:pass@host:port/db"
 PORT=4000
+DATABASE_URL=postgresql://postgres:postgres@db:5432/securesight
 ```
+
+### `/client/.env`
+
+```env
+NEXT_PUBLIC_API_URL=http://localhost:4000
+```
+
+> In production, these point to live Render/Vercel URLs and a cloud DB.
 
 ---
 
-## 📦 Future Improvements
+## Manual Setup (No Docker)
 
-* Real-time incident updates via WebSocket
-* Video player syncing with timeline
-* Auth system for multi-admin control
-* Role-based access (viewer vs supervisor)
-* Upload + S3 storage for actual CCTV footage
-* 3D route using React Three Fiber (extra credit)
+```bash
+# Backend
+cd server
+npm install
+npx prisma generate
+npx prisma migrate dev
+npm run dev
 
----
+# Frontend
+cd ../client
+npm install
+npm run dev
+```
+ 
 
-## ✅ Submission Checklist
-
-* [x] Public GitHub repo
-* [x] Hosted link (Vercel + Render)
-* [x] Seeded data with realistic incidents
-* [x] API endpoints and frontend integrations
-* [x] README with deployment + tech breakdown
-
----
-
-## 🔗 References
-
-* Figma Design: [Figma UI](https://www.figma.com/design/v3gdcLjbIWn4kXybewFZgw/Full-Stack-Developer-Internship-TA)
-* Prisma Docs: [https://www.prisma.io/docs](https://www.prisma.io/docs)
-* Neon: [https://neon.tech](https://neon.tech)
+## Directory Structure
 
 ```
+/
+├── client/       # Frontend: Next.js 14 + Tailwind
+├── server/       # Backend: Node.js + Express + Prisma
+├── docker-compose.yml
+``` 
+## Deployment Notes
 
-Use as `README.md` or as an attachable PDF for submission.
-```
+* **Backend** hosted on [Render](https://render.com)
+* **Frontend** hosted on [Vercel](https://vercel.com)
+* **Production PostgreSQL** is hosted via \[Aiven.io]
+* The included `docker-compose.yml` provides a **local PostgreSQL container** for testing and development purposes.
+ 
+
+## Author
+
+Technical Assignment by **Saurav Kale**
+[Portfolio →](https://portfolio-git-master-ksaurav24s-projects.vercel.app)
+ 
+
+## License
+
+This project was built solely for internship evaluation purposes and is free to review, test, and clone for assessment.

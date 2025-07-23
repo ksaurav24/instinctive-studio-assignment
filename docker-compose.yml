@@ -1,0 +1,40 @@
+version: '3.9'
+services:
+  server:
+    build: ./server
+    ports:
+      - "4000:4000"
+    env_file:
+      - ./server/.env
+    environment:
+      - DATABASE_URL=postgres://postgres:postgres@db:5432/securesight
+    volumes:
+      - ./server:/app
+    depends_on:
+      - db
+
+  client:
+    build: ./client
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./client/.env
+    volumes:
+      - ./client:/app
+    depends_on:
+      - server
+
+  db:
+    image: postgres:15
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: securesight
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
