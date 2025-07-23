@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import IncidentCard from "./IncidentCard";
+import { AnimatePresence } from "framer-motion";
 
 import BadgeBase from "@/assets/Badgebase.svg";
 import BadgeBase1 from "@/assets/Badgebase1.svg";
@@ -127,13 +128,15 @@ export default function IncidentList() {
 				) : incidents.length === 0 ? (
 					<div className="text-sm text-gray-400">No unresolved incidents</div>
 				) : (
-					incidents.map((incident) => (
-						<IncidentCard
-							key={incident.id}
-							incident={incident}
-							onResolve={handleResolve}
-						/>
-					))
+					<AnimatePresence>
+						{incidents.map((incident) => (
+							<IncidentCard
+								key={incident.id}
+								incident={incident}
+								onResolve={handleResolve}
+							/>
+						))}
+					</AnimatePresence>
 				)}
 			</div>
 		</div>
