@@ -1,9 +1,20 @@
 'use client';
 
-import Image from 'next/image';
-import { FaMapMarkerAlt, FaClock } from 'react-icons/fa';
+import Image from 'next/image'; 
 import { IoIosArrowForward } from 'react-icons/io';
-import { MdSecurity } from 'react-icons/md'; // generic threat icon
+import door_open from '@/assets/door-open.svg';
+import gun from '@/assets/gun.svg';
+import userSearch from '@/assets/user-search.svg';
+
+import clock from "@/assets/clock.svg";
+import cctv from '@/assets/nav_icons/cctv.svg';
+// map of icon according to incident type
+const incidentIcons: Record<string, string> = {
+  'Gun Threat': gun,
+  'Unauthorized Access': door_open,
+  'Face Recognised': userSearch,
+  // Add more mappings as needed
+};
 
 export default function IncidentCard({
   incident,
@@ -20,10 +31,10 @@ export default function IncidentCard({
   onResolve: (id: number) => void;
 }) {
   return (
-    <div className="flex items-center justify-between w-full bg-black/90 rounded-lg px-4 py-3 border border-zinc-700 shadow">
+    <div className="flex  items-center justify-between w-full  rounded-lg px-1 py-0 mb-6  shadow">
       
       {/* Thumbnail */}
-      <div className="w-20 h-14 relative shrink-0 rounded overflow-hidden border border-zinc-600">
+      <div className="h-18 w-34 relative shrink-0 rounded-md overflow-hidden border border-zinc-600">
         <Image
           src={incident.thumbnailUrl}
           alt="Incident thumbnail"
@@ -33,24 +44,38 @@ export default function IncidentCard({
       </div>
 
       {/* Text Info */}
-      <div className="flex flex-col text-white text-sm ml-4 grow">
+      <div className="flex flex-col items-start justify-between h-full gap-3 -mt-0 text-white text-sm ml-3 w-full">
         {/* Type */}
         <div className="flex items-center font-semibold mb-1 text-white">
-          <MdSecurity className="text-orange-500 mr-1" />
+            <Image
+              src={incidentIcons[incident.type]}
+              alt={incident.type}
+              className="mr-1"
+              width={16}
+              height={16}
+            />
           {incident.type}
         </div>
 
         {/* Location */}
-        <div className="flex items-center text-xs text-zinc-300 mb-0.5">
-          <FaMapMarkerAlt className="text-zinc-400 mr-1" />
+      <div className="flex flex-col ">
+          <div className="flex items-center text-xs text-zinc-300 mb-0.5">
+            <Image
+              src={cctv}
+              alt="Camera"
+              width={14}
+              height={14}
+              className="mr-1"
+            />
           {incident.camera.name}
         </div>
 
         {/* Timestamp */}
-        <div className="flex items-center text-xs text-zinc-400">
-          <FaClock className="mr-1" />
+        <div className="flex items-center text-xs font-bold text-zinc-400">
+          <Image src={clock} alt="Clock" width={10} height={10} className="mr-1" />
           {formatTime(incident.tsStart)} – {formatTime(incident.tsEnd)} on {formatDate(incident.tsStart)}
         </div>
+      </div>
       </div>
 
       {/* Resolve Button */}

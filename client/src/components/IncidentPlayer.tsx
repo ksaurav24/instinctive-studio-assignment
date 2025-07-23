@@ -6,10 +6,10 @@ import ellipsis_vertical from '@/assets/ellipsis_vertical.svg';
 
 export default function IncidentPlayer() {
   return (
-    <div className="relative w-7/12 h-fit aspect-video bg-black rounded-lg overflow-hidden shadow-lg border border-zinc-800">
+    <div className="relative w-7/12 h-full aspect-video bg-black rounded-lg overflow-hidden shadow-lg border border-zinc-800">
       {/* Video Element */}
       <Image
-              src="/mainPlayerBg.png"
+              src="/thumbnails/thumb1.png"
               layout="fill"
               className="w-full h-full object-cover" alt={''}      />
 
@@ -39,7 +39,7 @@ export default function IncidentPlayer() {
             />
           </div>
           <Image
-            src="/thumbnails/thumb1.png"
+            src="/thumbnails/thumb2.png"
             alt="Cam 2"
             width={112}
             height={64}
@@ -59,7 +59,7 @@ export default function IncidentPlayer() {
             />
           </div>
           <Image
-            src="/thumbnails/thumb2.png"
+            src="/thumbnails/thumb3.png"
             alt="Cam 3"
             width={112}
             height={64}
