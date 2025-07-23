@@ -28,7 +28,7 @@ export default function Navbar() {
   const [open, setOpen] = useState(false);
 
   return (
-    <header className="bg-transparent z-30 text-white px-6 py-3 shadow-md flex items-center justify-between border-b border-white/15 ">
+    <header className="bg-transparent z-30 text-white px-6 py-4 shadow-md flex items-center justify-between border-b border-white/15 ">
       {/* Logo */}
       <div className="flex items-center gap-2">
         <Image src="/logo.svg" alt="Logo" width={20} height={26} className="rounded" />

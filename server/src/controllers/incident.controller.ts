@@ -11,6 +11,7 @@ export async function getIncidents(req: any, res: any) {
     include: { camera: true },
     orderBy: { tsStart: 'desc' }
   });
+ 
 
   res.json(incidents);
 }
