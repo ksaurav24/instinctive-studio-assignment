@@ -3,8 +3,8 @@
 
 ## Live Demo
 
--  **Frontend**: [https://securesight-dashboard.vercel.app](https://securesight-dashboard.vercel.app)
--  **Backend**: [https://securesight-api.onrender.com](https://securesight-api.onrender.com)
+-  **Frontend**: [https://instinctive-studio-assignment-alpha.vercel.app](https://securesight-dashboard.vercel.app)
+-  **Backend**: [https://securesight-server.onrender.com](https://securesight-api.onrender.com)
 
 > ⚠️ The deployed version uses a **cloud-hosted PostgreSQL** database provisioned via **Aiven.io**. For local testing, a development PostgreSQL container is included via Docker Compose.
 
