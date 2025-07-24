@@ -126,7 +126,7 @@ npm run dev
 ## 👤 Author
 
 **Saurav Kale**
-[Portfolio →](https://portfolio-git-master-ksaurav24s-projects.vercel.app)
+[Portfolio →](https://portfolio-lovat-two-15.vercel.app)
 Email: `ksaurav4093@gmail.com`
  
 ## 🪪 License
