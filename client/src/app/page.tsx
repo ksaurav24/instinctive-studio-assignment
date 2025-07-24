@@ -20,7 +20,7 @@ export default function Home() {
       <div className="relative z-10">
         <Navbar />
         <Dashboard />
-        <div className="min-w-full min-h-screen text-amber-50 p-6"></div>
+        
       </div>
     </main>
   );

@@ -1,6 +1,6 @@
-"use client";
 
-import React, { useEffect, useState } from "react";
+
+import React from "react";
 import IncidentCard from "./IncidentCard";
 import { AnimatePresence } from "framer-motion";
 
@@ -29,53 +29,41 @@ export interface IncidentCardProps {
 	onResolve: (id: number) => Promise<void>;
 }
 
-export default function IncidentList() {
-	const [incidents, setIncidents] = useState<Incident[]>([]);
-	const [resolvedCount, setResolvedCount] = useState<number>(0);
-	const [loading, setLoading] = useState<boolean>(true);
-
-	useEffect(() => {
-		const fetchIncidents = async () => {
-			const res = await fetch(
-				`${process.env.NEXT_PUBLIC_API_URL}/incidents?resolved=false`
-			);
-			const data = await res.json();
-			setIncidents(data);
-		};
-		setLoading(true);
-		fetchIncidents()
-			.catch((err) => {
-				console.error("Failed to fetch incidents:", err);
-			})
-			.finally(() => {
-				setLoading(false);
-			});
-	}, []);
+export default function IncidentList({
+	incidents,
+	loading,
+	setIncidents,
+	resolvedCount,
+	setResolvedCount
+}: {
+	incidents: Incident[];
+	loading: boolean;
+	setIncidents: React.Dispatch<React.SetStateAction<Incident[]>>;
+	resolvedCount: number;
+	setResolvedCount: React.Dispatch<React.SetStateAction<number>>;
+}) {
 
 	const handleResolve = async (id: number) => {
 		// Optimistic UI: remove from UI immediately
-		setIncidents((prev) => prev.filter((i) => i.id !== id));
-		// set thhe resolved count
-		setResolvedCount((prev) => prev + 1);
-
-		// Call API to resolve incident
-
-		await fetch(`${process.env.NEXT_PUBLIC_API_URL}/incidents/${id}/resolve`, {
-			method: "PATCH",
-		});
+        setIncidents((prev) => prev.filter((incident) => incident.id !== id)); 
+        // Async call to resolve the incident
+        try {
+            const res = await fetch(
+                `${process.env.NEXT_PUBLIC_API_URL}/incidents/${id}/resolve`,
+                { method: "PATCH" }
+            );
+            if (!res.ok) {
+                throw new Error("Failed to resolve incident");
+            }
+            // Update resolved count
+            setResolvedCount((prev: number) => prev + 1);
+        } catch (error) {
+            console.error("Error resolving incident:", error);
+            // If there's an error, re-add the incident to the list
+            setIncidents((prev) => [...prev, incidents.find((i) => i.id === id)!]);
+        }
 	};
-
-	useEffect(() => {
-		const fetchResolved = async () => {
-			const res = await fetch(
-				`${process.env.NEXT_PUBLIC_API_URL}/incidents?resolved=true`
-			);
-			const data = await res.json();
-			setResolvedCount(data.length);
-		};
-		fetchResolved();
-	}, []);
-
+ 
 	return (
 		<div className="w-2/5 h-full bg-[#131313] rounded-lg py-4 px-2 overflow-hidden relative">
 			<div className="flex items-center justify-between mb-4 px-1">
@@ -130,7 +118,7 @@ export default function IncidentList() {
 				) : (
 					<AnimatePresence>
 						{incidents.map((incident) => (
-							<IncidentCard
+							<IncidentCard  
 								key={incident.id}
 								incident={incident}
 								onResolve={handleResolve}
