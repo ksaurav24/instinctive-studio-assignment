@@ -25,14 +25,14 @@ export default function Dashboard() {
                     `${process.env.NEXT_PUBLIC_API_URL}/incidents?resolved=false`
                 );
                 const data = await res.json();
-                setIncidents(data);
+                setIncidents(data.data);
             };
             const fetchResolved = async () => {
 			const res = await fetch(
 				`${process.env.NEXT_PUBLIC_API_URL}/incidents?resolved=true`
 			);
 			const data = await res.json();
-			setResolvedCount(data.length);
+			setResolvedCount(data.data.length);
 		};
             setLoading(true);
 		    fetchResolved();

@@ -1,5 +1,3 @@
-
-
 import React from "react";
 import IncidentCard from "./IncidentCard";
 import { AnimatePresence } from "framer-motion";
@@ -11,6 +9,7 @@ import Image from "next/image";
 
 import unresolvedIncidents from "@/assets/unresolvedIncidents.svg";
 import checkbox from "@/assets/check-check.svg";
+import { Skeleton } from "@mui/material";
 
 export interface Incident {
 	id: number;
@@ -34,7 +33,7 @@ export default function IncidentList({
 	loading,
 	setIncidents,
 	resolvedCount,
-	setResolvedCount
+	setResolvedCount,
 }: {
 	incidents: Incident[];
 	loading: boolean;
@@ -42,28 +41,27 @@ export default function IncidentList({
 	resolvedCount: number;
 	setResolvedCount: React.Dispatch<React.SetStateAction<number>>;
 }) {
-
 	const handleResolve = async (id: number) => {
 		// Optimistic UI: remove from UI immediately
-        setIncidents((prev) => prev.filter((incident) => incident.id !== id)); 
-        // Async call to resolve the incident
-        try {
-            const res = await fetch(
-                `${process.env.NEXT_PUBLIC_API_URL}/incidents/${id}/resolve`,
-                { method: "PATCH" }
-            );
-            if (!res.ok) {
-                throw new Error("Failed to resolve incident");
-            }
-            // Update resolved count
-            setResolvedCount((prev: number) => prev + 1);
-        } catch (error) {
-            console.error("Error resolving incident:", error);
-            // If there's an error, re-add the incident to the list
-            setIncidents((prev) => [...prev, incidents.find((i) => i.id === id)!]);
-        }
+		setIncidents((prev) => prev.filter((incident) => incident.id !== id));
+		// Async call to resolve the incident
+		try {
+			const res = await fetch(
+				`${process.env.NEXT_PUBLIC_API_URL}/incidents/${id}/resolve`,
+				{ method: "PATCH" }
+			);
+			if (!res.ok) {
+				throw new Error("Failed to resolve incident");
+			}
+			// Update resolved count
+			setResolvedCount((prev: number) => prev + 1);
+		} catch (error) {
+			console.error("Error resolving incident:", error);
+			// If there's an error, re-add the incident to the list
+			setIncidents((prev) => [...prev, incidents.find((i) => i.id === id)!]);
+		}
 	};
- 
+
 	return (
 		<div className="w-2/5 h-full bg-[#131313] rounded-lg py-4 px-2 overflow-hidden relative">
 			<div className="flex items-center justify-between mb-4 px-1">
@@ -75,34 +73,80 @@ export default function IncidentList({
 						width={24}
 						height={24}
 					/>
-					<span>{incidents.length} Unresolved Incidents</span>
+					{loading ? (
+						<Skeleton
+							sx={{ bgcolor: "grey.900" }}
+							variant="text"
+							width={260}
+							height={24}
+							animation="wave"
+						/>
+					) : (
+						<span>{incidents.length} Unresolved Incidents</span>
+					)}
 				</div>
 
 				{/* Right: User + Cameras + Resolved */}
 				<div className="flex items-center   text-xs">
-					{/* three icons badges */}
-
-					<Image src={BadgeBase} alt="Badge" width={20} height={20} />
-
-					<Image
-						src={BadgeBase1}
-						alt="Badge"
-						className="-ml-1 "
-						width={20}
-						height={20}
-					/>
-
-					<Image
-						src={BadgeBase2}
-						alt="Badge"
-						className="-ml-1 mr-2"
-						width={20}
-						height={20}
-					/>
+					{loading ? (
+						<div className="flex items-center   ">
+							<Skeleton
+								sx={{ bgcolor: "grey.900" }}
+								variant="circular"
+								width={20}
+								height={20}
+								animation="wave" 
+							/>
+							<Skeleton
+								sx={{ bgcolor: "grey.900" }}
+								variant="circular"
+								width={20}
+								height={20}
+								animation="wave"
+                                className="-ml-1"
+							/>
+							<Skeleton
+                                sx={{ bgcolor: "grey.900" }}
+								variant="circular"
+								width={20}
+								height={20}
+								animation="wave"
+                                className="-ml-1 mr-2"
+							/>
+						</div>
+					) : (
+						<>
+							<Image src={BadgeBase} alt="Badge" width={20} height={20} />
+							<Image
+								src={BadgeBase1}
+								alt="Badge"
+								className="-ml-1"
+								width={20}
+								height={20}
+							/>
+							<Image
+								src={BadgeBase2}
+								alt="Badge"
+								className="-ml-1 mr-2"
+								width={20}
+								height={20}
+							/>
+						</>
+					)}
 
 					<div className="bg-zinc-950 text-zinc-50 px-2 py-[2px] rounded-full border border-zinc-700 flex items-center gap-1">
 						<Image src={checkbox} alt="Resolved" width={16} height={16} />
-						<span>{resolvedCount} resolved incidents</span>
+						{loading ? (
+							<Skeleton
+								sx={{ bgcolor: "grey.900" }}
+								variant="text"
+								width={110}
+								height={20}
+								animation="wave"
+							/>
+						) : (
+							<span>{resolvedCount} resolved incidents</span>
+						)}
 					</div>
 				</div>
 			</div>
@@ -110,15 +154,24 @@ export default function IncidentList({
 			<div className="overflow-y-auto scrollbar-none max-h-full w-full">
 				{/* Loading state */}
 				{loading ? (
-					<div className="flex items-center justify-center h-full">
-						<span className="text-gray-400">Loading incidents...</span>
+					<div className="flex flex-col gap-3 w-full">
+						{Array.from({ length: 4 }).map((_, i) => (
+							<Skeleton
+								sx={{ bgcolor: "grey.900" }}
+								key={i}
+								variant="rounded"
+								height={82}
+								animation="wave"
+								className="rounded-lg"
+							/>
+						))}
 					</div>
 				) : incidents.length === 0 ? (
 					<div className="text-sm text-gray-400">No unresolved incidents</div>
 				) : (
 					<AnimatePresence>
 						{incidents.map((incident) => (
-							<IncidentCard  
+							<IncidentCard
 								key={incident.id}
 								incident={incident}
 								onResolve={handleResolve}
